@@ -253,6 +253,17 @@
     padding:12px 24px;border-radius:99px;font-size:13px;
     backdrop-filter:blur(16px);transition:all .3s ease;z-index:200;white-space:nowrap;}
   .toast.show{transform:translateX(-50%) translateY(0);opacity:1;}
+
+  /* Save flash overlay */
+  .save-flash{position:fixed;inset:0;z-index:300;display:flex;flex-direction:column;
+    align-items:center;justify-content:center;
+    background:rgba(10,20,50,0.82);backdrop-filter:blur(12px);
+    opacity:0;pointer-events:none;transition:opacity .25s ease;}
+  .save-flash.show{opacity:1;pointer-events:all;}
+  .save-flash .sf-icon{font-size:56px;margin-bottom:12px;}
+  .save-flash .sf-msg{font-family:'Cormorant Garamond',serif;font-size:28px;font-style:italic;
+    color:var(--teal);margin-bottom:6px;}
+  .save-flash .sf-sub{font-size:13px;color:var(--dim);}
 </style>
 </head>
 <body>
@@ -500,6 +511,11 @@
 </div>
 
 <div class="toast" id="toast"></div>
+<div class="save-flash" id="save-flash">
+  <div class="sf-icon">✨</div>
+  <div class="sf-msg" id="sf-msg">Entry saved</div>
+  <div class="sf-sub" id="sf-sub"></div>
+</div>
 
 <script>
 // Stars
@@ -693,11 +709,22 @@ function saveLog(){
   if(idx>=0)state.entries[idx]=entry;else state.entries.push(entry);
   state.entries.sort((a,b)=>b.date.localeCompare(a.date));
   save();updateStats();
-  showToast(editingDate?'Entry updated ✨':'Entry saved ✨');
+  const isEdit=!!editingDate;
+  const savedDate=date;
   editingDate=null;
   document.getElementById('edit-banner').classList.remove('show');
   document.getElementById('save-btn').textContent='Save Entry';
   resetForm();
+  showSaveFlash(isEdit?'Entry updated ✨':'Entry saved ✨', fmtDate(savedDate));
+  // Switch to history after flash so user sees their entry
+  setTimeout(()=>{
+    document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+    document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+    document.getElementById('panel-history').classList.add('active');
+    document.querySelectorAll('.nav-btn')[1].classList.add('active');
+    document.querySelector('.scroll-area').scrollTop=0;
+    renderHistory();
+  },1700);
 }
 
 function resetForm(){
@@ -849,6 +876,13 @@ function renderChart(){
 
 function fmtDate(d){if(!d)return '';return new Date(d+'T12:00:00').toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'});}
 function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2600);}
+function showSaveFlash(msg,sub){
+  const f=document.getElementById('save-flash');
+  document.getElementById('sf-msg').textContent=msg;
+  document.getElementById('sf-sub').textContent=sub||'';
+  f.classList.add('show');
+  setTimeout(()=>f.classList.remove('show'),1600);
+}
 
 updateStats();
 </script>
