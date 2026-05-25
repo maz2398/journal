@@ -66,18 +66,17 @@
 
   /* Scroll */
   .scroll-area{flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;
-    padding:16px 16px calc(var(--nav-h) + var(--safe-bottom) + 16px);}
+    padding:16px 16px calc(var(--nav-h) + 16px);}
   .scroll-area::-webkit-scrollbar{display:none;}
 
-  /* Bottom nav — fixed height, no gap */
+  /* Bottom nav — iOS PWA safe area fix */
   .bottom-nav{position:fixed;bottom:0;left:0;right:0;z-index:100;
-    display:flex;
+    display:flex;flex-direction:column;
     background:rgba(12,20,46,0.92);
     backdrop-filter:blur(24px);
-    border-top:1px solid var(--gborder);
-    /* exact height = icon area + safe zone, no extra space */
-    padding-bottom:var(--safe-bottom);
-  }
+    border-top:1px solid var(--gborder);}
+  .nav-btn-row{display:flex;width:100%;}
+  .nav-safe{height:env(safe-area-inset-bottom,0px);min-height:0;background:rgba(12,20,46,0.92);}
   .nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
     gap:3px;border:none;background:transparent;cursor:pointer;
     padding:10px 4px;color:rgba(180,200,240,0.5);transition:color .2s;position:relative;}
@@ -248,7 +247,7 @@
   .empty{text-align:center;padding:40px 20px;color:var(--dim);
     font-style:italic;font-family:'Cormorant Garamond',serif;font-size:18px;line-height:1.5;}
 
-  .toast{position:fixed;bottom:calc(var(--nav-h) + var(--safe-bottom) + 16px);left:50%;
+  .toast{position:fixed;bottom:calc(var(--nav-h) + env(safe-area-inset-bottom,0px) + 16px);left:50%;
     transform:translateX(-50%) translateY(20px);opacity:0;
     background:rgba(78,205,196,.22);border:1px solid var(--teal);color:var(--teal);
     padding:12px 24px;border-radius:99px;font-size:13px;
@@ -490,10 +489,13 @@
   </div><!-- /scroll-area -->
 
   <div class="bottom-nav">
-    <button class="nav-btn active" onclick="switchTab('log',this)"><span class="nav-icon">✏️</span><span class="nav-label">Log</span></button>
-    <button class="nav-btn" onclick="switchTab('history',this)"><span class="nav-icon">📋</span><span class="nav-label">History</span></button>
-    <button class="nav-btn" onclick="switchTab('photos',this)"><span class="nav-icon">📷</span><span class="nav-label">Photos</span></button>
-    <button class="nav-btn" onclick="switchTab('routine',this)"><span class="nav-icon">📊</span><span class="nav-label">Insights</span></button>
+    <div class="nav-btn-row">
+      <button class="nav-btn active" onclick="switchTab('log',this)"><span class="nav-icon">✏️</span><span class="nav-label">Log</span></button>
+      <button class="nav-btn" onclick="switchTab('history',this)"><span class="nav-icon">📋</span><span class="nav-label">History</span></button>
+      <button class="nav-btn" onclick="switchTab('photos',this)"><span class="nav-icon">📷</span><span class="nav-label">Photos</span></button>
+      <button class="nav-btn" onclick="switchTab('routine',this)"><span class="nav-icon">📊</span><span class="nav-label">Insights</span></button>
+    </div>
+    <div class="nav-safe"></div>
   </div>
 </div>
 
