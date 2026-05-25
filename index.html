@@ -513,6 +513,19 @@
 })();
 
 const KEY='wegovy_v4';
+// Migrate data from any previous version keys
+(function migrate(){
+  const oldKeys=['wegovy_v3','wegovy_v2','wegovy_v1','wegovy_journal_v1'];
+  if(localStorage.getItem(KEY)) return; // already on new key, nothing to do
+  for(const k of oldKeys){
+    const old=localStorage.getItem(k);
+    if(old){
+      localStorage.setItem(KEY,old);
+      console.log('Migrated data from',k);
+      break;
+    }
+  }
+})();
 let state=JSON.parse(localStorage.getItem(KEY)||'{"entries":[],"photos":[]}');
 const SW=69,TW=53,HEIGHT=1.59;
 let editingDate=null; // track which date we're editing
